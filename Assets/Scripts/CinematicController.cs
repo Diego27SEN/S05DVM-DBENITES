@@ -8,27 +8,42 @@ public class CinematicController : MonoBehaviour
 {
     public CinemachineCamera camA;
     public CinemachineCamera camB;
+    public CinemachineCamera camC;
+    private int currentCam = 0;
 
     void Start()
     {
-        
+        ActivateCamera(0);
     }
-    [Button]
 
+    [Button]
     public void SwitchCameras()
     {
-        if (camB.Priority  > camA.Priority)
-        {
-            camB.Priority = 10;
-            camA.Priority = 20;
-            return;
-        }
+        currentCam++;
 
-        else
+        if (currentCam > 2)
+            currentCam = 0;
+
+        ActivateCamera(currentCam);
+    }
+
+    void ActivateCamera(int index)
+    {
+        camA.Priority = 10;
+        camB.Priority = 10;
+        camC.Priority = 10;
+
+        switch (index)
         {
-            camB.Priority = 20;
-            camA.Priority = 10;
-            return;
+            case 0:
+                camA.Priority = 20;
+                break;
+            case 1:
+                camB.Priority = 20;
+                break;
+            case 2:
+                camC.Priority = 20;
+                break;
         }
     }
 }
