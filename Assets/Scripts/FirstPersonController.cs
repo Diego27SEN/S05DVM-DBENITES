@@ -8,6 +8,7 @@ public class FirstPersonController : MonoBehaviour
     private CharacterController controller;
     public CinemachineCamera characterCamera;
     public Animator animator;
+    public bool canMove = false;
 
 
 
@@ -51,13 +52,14 @@ public class FirstPersonController : MonoBehaviour
     }
     void Start()
     {
-
+        canMove = false;
     }
     void Update()
     {
 
+        if (!canMove) return;
+
         OnMove();
-        //OnSimpleMove();
     }
 
     public void OnMove()
@@ -140,4 +142,6 @@ public class FirstPersonController : MonoBehaviour
         IsDashing = true;
         dashTimer = dashDuration;
     }
+
+
 }
