@@ -52,8 +52,8 @@ public class ThirdPersonController6 : MonoBehaviour
     public bool enableWallRun;
 
     [FoldoutGroup("Controller/Dash")]
-    public float dashCooldown = 1f;
-    private bool canDash = true;
+    public float dashCooldown = 10f;
+    public bool canDash = false;
 
     [FoldoutGroup("WallJump")]
     public float wallJumpForce = 10f;
@@ -62,7 +62,7 @@ public class ThirdPersonController6 : MonoBehaviour
     [FoldoutGroup("WallJump")]
     public float wallJumpCooldown = 1f;
 
-    private bool canWallJump = true;
+    public bool canWallJump = false;
 
     Vector3 normalDebug;
     Vector3 impactPoint;
@@ -218,11 +218,12 @@ public class ThirdPersonController6 : MonoBehaviour
     }
     private void OnDash(InputAction.CallbackContext context)
     {
-        if (!canDash || IsDashing) return;
-
-        StartCoroutine(DashCoroutine());
+        if( IsDashing == true)
+        {
+            StartCoroutine(nameof(DashCoroutine));    
+            dashTimer = dashDuration;
+        }
     }
-
 
     public void EnableWallRun()
     {
@@ -321,15 +322,15 @@ public class ThirdPersonController6 : MonoBehaviour
 
     IEnumerator DashCoroutine()
     {
-        canDash = false;
-        IsDashing = true;
-        dashTimer = dashDuration;
+        while(IsDashing)
+        {
+            canDash = true;
+            yield return new WaitForSeconds(5f);
 
-        yield return new WaitForSeconds(dashDuration);
+            canDash = false;
 
-        IsDashing = false;
-
-        yield return new WaitForSeconds(dashCooldown);
-        canDash = true;
+            yield break;
+        }
+        yield return null;
     }
 }
