@@ -5774,6 +5774,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController
   characterCamera: {fileID: 1288818931}
+  animator: {fileID: 0}
+  canMove: 0
   moveSpeed: 5
   rotationSpeed: 10
   verticalVelocity: 0
