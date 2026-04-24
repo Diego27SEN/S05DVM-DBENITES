@@ -8,61 +8,76 @@ public class ThirdPersonController6 : MonoBehaviour
 {
     [FoldoutGroup("References")]
     public InputSystem_Actions inputs;
+
     [FoldoutGroup("References")]
     private CharacterController controller;
+
     [FoldoutGroup("References")]
     public CinemachineCamera characterCamera;
+
     [FoldoutGroup("References")]
     public Animator animator;
 
-
     [FoldoutGroup("Controller")]
     public float moveSpeed = 5f;
+
     [FoldoutGroup("Controller")]
     public float rotationSpeed = 200f;
+
     [FoldoutGroup("Controller")]
     public float verticalVelocity = 0;
+
     [FoldoutGroup("Controller")]
     public float jumpForce = 10;
+
     [FoldoutGroup("Controller")]
     public float pushForce = 4;
 
     [FoldoutGroup("Controller/Dash")]
     private bool IsDashing;
+
     [FoldoutGroup("Controller/Dash")]
     public float dashForce;
+
     [FoldoutGroup("Controller/Dash")]
     public float dashDuration = 0.2f;
+
     [FoldoutGroup("Controller/Dash")]
     private float dashTimer;
+
     [FoldoutGroup("Controller/Animator"), SerializeField]
     private CinemachineImpulseSource source;
 
-    [SerializeField] private Vector2 moveInput;
-
-
+    [SerializeField]
+    private Vector2 moveInput;
 
     [FoldoutGroup("WallRun")]
     public float rayLenght;
+
     [FoldoutGroup("WallRun")]
     public float cameraTitlt = 15;
+
     [FoldoutGroup("WallRun")]
     public float maxTimeInAir;
+
     [FoldoutGroup("WallRun")]
     public bool enableWallRun;
 
     [FoldoutGroup("Controller/Dash")]
-    public float dashCooldown = 10f;
-    public bool canDash = false;
+    public float dashCooldown = 1f;
+
+    private bool canDash = true;
 
     [FoldoutGroup("WallJump")]
     public float wallJumpForce = 10f;
+
     [FoldoutGroup("WallJump")]
     public float wallJumpUpForce = 8f;
+
     [FoldoutGroup("WallJump")]
     public float wallJumpCooldown = 1f;
 
-    public bool canWallJump = false;
+    private bool canWallJump = true;
 
     Vector3 normalDebug;
     Vector3 impactPoint;
@@ -76,6 +91,7 @@ public class ThirdPersonController6 : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
+
     private void OnEnable()
     {
         inputs.Enable();
@@ -83,32 +99,19 @@ public class ThirdPersonController6 : MonoBehaviour
         inputs.Player.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         inputs.Player.Move.canceled += ctx => moveInput = Vector2.zero;
 
-
         inputs.Player.Jump.performed += OnJump;
-
         inputs.Player.Sprint.performed += OnDash;
     }
-    void Start()
-    {
 
-    }
     void Update()
     {
         EnableWallRun();
-        if (!IsDashing)
-        {
-            OnMove();
-        }
-        else
-        {
-            OnMove(); // dash con gravedad integrada
-        }
+        OnMove();
     }
-
 
     public void TakeDamage()
     {
-        source.GenerateImpulse(1f); // generar una sacudida más fuerte al recibir daño
+        source.GenerateImpulse(0.7f);
     }
 
     public void OnMove()
@@ -117,36 +120,25 @@ public class ThirdPersonController6 : MonoBehaviour
         cameraForwardDir.y = 0;
         cameraForwardDir.Normalize();
 
-
         if (moveInput != Vector2.zero)
         {
             Quaternion targetQuaternion = Quaternion.LookRotation(cameraForwardDir);
-            //transform.rotation = targetQuaternion;
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 targetQuaternion,
-                rotationSpeed * Time.deltaTime);
-
-
+                rotationSpeed * Time.deltaTime
+            );
         }
-        //>?
+
         Vector3 moveDir;
+
         if (!enableWallRun)
-        {
             moveDir = (cameraForwardDir * moveInput.y + transform.right * moveInput.x) * moveSpeed;
-        }
         else
-        {
             moveDir = (crossResult * moveInput.y) * moveSpeed;
 
-
-
-        }
-
         float magnitud = Mathf.Abs(controller.velocity.magnitude);
-        // print(magnitud);
         animator.SetFloat("Speed", magnitud);
-
 
         verticalVelocity += Physics.gravity.y * Time.deltaTime;
 
@@ -156,16 +148,12 @@ public class ThirdPersonController6 : MonoBehaviour
         if (controller.isGrounded && verticalVelocity < 0)
             verticalVelocity = -2f;
 
-
         moveDir.y = verticalVelocity;
 
         animator.SetBool("Grounded", controller.isGrounded);
 
-
-
         if (IsDashing)
         {
-            //->convertir el dash a un barrido por el piso! dash con gravedad integrada omaegoto!
             moveDir = transform.forward * dashForce * (dashTimer / dashDuration);
 
             dashTimer -= Time.deltaTime;
@@ -173,12 +161,13 @@ public class ThirdPersonController6 : MonoBehaviour
             if (dashTimer <= 0)
                 IsDashing = false;
         }
+
         controller.Move(moveDir * Time.deltaTime);
     }
 
     private void OnJump(InputAction.CallbackContext context)
     {
-        if (enableWallRun && canWallJump && !controller.isGrounded) // wall jump agregado
+        if (enableWallRun && canWallJump && !controller.isGrounded)
         {
             Vector3 jumpDir = normalDebug + Vector3.up;
 
@@ -186,7 +175,8 @@ public class ThirdPersonController6 : MonoBehaviour
 
             controller.Move(jumpDir.normalized * wallJumpForce * Time.deltaTime);
 
-            source.GenerateImpulse(0.4f); // más fuerte que salto normal
+            source.GenerateImpulse(0.4f);
+            enableWallRun = false; 
 
             StartCoroutine(WallJumpCooldown());
             return;
@@ -198,42 +188,28 @@ public class ThirdPersonController6 : MonoBehaviour
         source.GenerateImpulse();
         verticalVelocity = jumpForce;
     }
-    public void OnSimpleMove()
-    {
-        transform.Rotate(Vector3.up * moveInput.x * rotationSpeed * Time.deltaTime);
-        Vector3 moveDir = transform.forward * moveSpeed * moveInput.y;
-        controller.SimpleMove(moveDir);
-    }
-    private void OnControllerColliderHit(ControllerColliderHit hit)
-    {
 
-
-        Vector3 pushDir = (hit.transform.position - transform.position).normalized;
-
-        if (hit.rigidbody != null && hit.rigidbody.linearVelocity == Vector3.zero)
-        {
-            print(hit.gameObject.name);
-            hit.rigidbody.AddForce(pushDir * pushForce, ForceMode.Impulse);
-        }
-    }
     private void OnDash(InputAction.CallbackContext context)
     {
-        if( IsDashing == true)
-        {
-            StartCoroutine(nameof(DashCoroutine));    
-            dashTimer = dashDuration;
-        }
+        if (!canDash || IsDashing) return;
+
+        StartCoroutine(DashCoroutine());
     }
 
     public void EnableWallRun()
     {
-        //->mejor castearlo desde una referenia en los piez
+        if (!canWallJump) // hace que no puedas volver a hacer wallrun inmediatamente después de un walljump
+        {
+            enableWallRun = false;
+            characterCamera.Lens.Dutch = 0; 
+            return;
+        }
+    
+
         RaycastHit hit = default;
 
         Physics.Raycast(transform.position, transform.right, out RaycastHit hitRight, rayLenght);
-
         Physics.Raycast(transform.position, -transform.right, out RaycastHit hitLeft, rayLenght);
-
 
         if (hitRight.collider != null && hitRight.collider.gameObject.tag == "Wall")
         {
@@ -254,63 +230,14 @@ public class ThirdPersonController6 : MonoBehaviour
         if (hit.collider != null)
         {
             enableWallRun = true;
-            Debug.Log("AleluyaR");
 
             normalDebug = hit.normal;
             impactPoint = hit.point;
-            crossResult = Vector3.Cross(normalDebug, transform.up);//+1
+            crossResult = Vector3.Cross(normalDebug, transform.up);
 
             if (Vector3.Dot(crossResult, transform.forward) < 0)
-            {
                 crossResult *= -1;
-            }
         }
-
-
-       /* if (hitRight.collider != null &&  hitRight.collider.gameObject.tag == "Wall")
-        {
-
-
-
-            enableWallRun = true;
-            Debug.Log("AleluyaR");
-
-            normalDebug = hitRight.normal;
-            impactPoint = hitRight.point;
-            crossResult = Vector3.Cross(normalDebug, transform.up);//+1
-
-            if( Vector3.Dot(crossResult,transform.forward) < 0)
-            {
-                crossResult *= -1;
-            }
-
-
-        }
-        else
-        {
-            enableWallRun =false;
-        }
-
-        if (hitLeft.collider != null && hitLeft.collider.gameObject.tag == "Wall")
-        {
-            Debug.Log("AleluyaL");
-        } */
-    } 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.purple;
-        Gizmos.DrawRay(transform.position, transform.right * rayLenght);
-        Gizmos.color = Color.navyBlue;
-        Gizmos.DrawRay(transform.position, -transform.right * rayLenght);
-
-        Gizmos.color = Color.magenta;
-        Gizmos.DrawRay(impactPoint, normalDebug * rayLenght);
-        Gizmos.DrawSphere(impactPoint, 0.1f);
-
-        Gizmos.color = Color.orange;
-        Gizmos.DrawRay(impactPoint, crossResult * rayLenght);
-
-
     }
 
     IEnumerator WallJumpCooldown()
@@ -322,15 +249,15 @@ public class ThirdPersonController6 : MonoBehaviour
 
     IEnumerator DashCoroutine()
     {
-        while(IsDashing)
-        {
-            canDash = true;
-            yield return new WaitForSeconds(5f);
+        canDash = false;
+        IsDashing = true;
+        dashTimer = dashDuration;
 
-            canDash = false;
+        yield return new WaitForSeconds(dashDuration);
 
-            yield break;
-        }
-        yield return null;
+        IsDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 }

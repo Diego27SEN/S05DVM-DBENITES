@@ -1382,8 +1382,8 @@ Transform:
   m_GameObject: {fileID: 117990281}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -73.531, y: 1.6, z: 62.7833}
-  m_LocalScale: {x: 5.028071, y: 8.325219, z: 26.445545}
+  m_LocalPosition: {x: -73.531, y: 1.6, z: 125.1407}
+  m_LocalScale: {x: 5.028071, y: 8.325219, z: 51.388985}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2872,12 +2872,12 @@ MonoBehaviour:
   source: {fileID: 1011737455}
   moveInput: {x: 0, y: 0}
   rayLenght: 1
-  cameraTitlt: 15
+  cameraTitlt: 10
   maxTimeInAir: 1
   enableWallRun: 0
-  dashCooldown: 1.5
+  dashCooldown: 10
   wallJumpForce: 10
-  wallJumpUpForce: 8
+  wallJumpUpForce: 10
   wallJumpCooldown: 10
 --- !u!143 &1450401493
 CharacterController:
@@ -3585,8 +3585,8 @@ Transform:
   m_GameObject: {fileID: 1679604899}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -67.02, y: 5.1238, z: 15.2402}
-  m_LocalScale: {x: 0.46875, y: 7.0276, z: 16.75821}
+  m_LocalPosition: {x: -67.02, y: 5.1238, z: 32.437}
+  m_LocalScale: {x: 0.46875, y: 7.0276, z: 51.15108}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4664,8 +4664,8 @@ Transform:
   m_GameObject: {fileID: 2104342862}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -82.38, y: 5.1238, z: 36.21}
-  m_LocalScale: {x: 0.46875, y: 7.0276, z: 16.75821}
+  m_LocalPosition: {x: -82.38, y: 5.1238, z: 99.9}
+  m_LocalScale: {x: 0.46875, y: 7.0276, z: 102.72614}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
