@@ -1,30 +1,13 @@
+using Sirenix.OdinInspector;
 using System;
 using Unity.Cinemachine;
 using UnityEngine;
-using Sirenix.OdinInspector;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public CinemachineCamera camA;
-    public CinemachineCamera camB;
-
-
-    [Button("Transition")]
-    public void transition()
+    public void RestartGame()
     {
-        if (camA.Priority > camB.Priority)
-        {
-            camA.Priority = 0;
-            camB.Priority = 1;
-        }
-        else
-        {
-            camA.Priority = 1;
-            camB.Priority = 0;
-        }
-    }
-    public void OnCameraFinished()
-    {
-        Debug.Log("Camera transition finished!");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
