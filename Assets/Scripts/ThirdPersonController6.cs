@@ -51,6 +51,9 @@ public class ThirdPersonController6 : MonoBehaviour
     [SerializeField]
     private Vector2 moveInput;
 
+    [SerializeField]
+    private Vector3 knockbackVelocity;
+
     [FoldoutGroup("WallRun")]
     public float rayLenght;
 
@@ -111,9 +114,22 @@ public class ThirdPersonController6 : MonoBehaviour
 
     public void TakeDamage()
     {
-        source.GenerateImpulse(0.7f);
+        if (source != null)
+        {
+            source.GenerateImpulse(1.0f);
+        }
+    }
+    //Cambio
+
+    public void PushPlayer(Vector3 directionAndForce, float force)
+    {
+        knockbackVelocity = directionAndForce;
     }
 
+    public void PushBackStandard()
+    {
+        PushPlayer(-transform.forward + Vector3.up * 0.5f, 5f);
+    }
     public void OnMove()
     {
         Vector3 cameraForwardDir = characterCamera.transform.forward;
@@ -160,6 +176,12 @@ public class ThirdPersonController6 : MonoBehaviour
 
             if (dashTimer <= 0)
                 IsDashing = false;
+        }
+        // Cambio 
+        if (knockbackVelocity.magnitude > 0.1f)
+        {
+            moveDir += knockbackVelocity;
+            knockbackVelocity = Vector3.Lerp(knockbackVelocity, Vector3.zero, Time.deltaTime * 5f);
         }
 
         controller.Move(moveDir * Time.deltaTime);
