@@ -123,7 +123,7 @@ public class ThirdPersonController6 : MonoBehaviour
 
     public void PushPlayer(Vector3 directionAndForce, float force)
     {
-        knockbackVelocity = directionAndForce;
+        knockbackVelocity = directionAndForce * force;
     }
 
     public void PushBackStandard()

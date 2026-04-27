@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class Health : MonoBehaviour
 {
     public float maxHealth = 100f;
-    public float currentHealth;
+    public float currentHealth = 100f;
 
     [FoldoutGroup("Eventos")]
     public UnityEvent OnTakeDamage;
